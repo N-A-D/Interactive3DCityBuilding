@@ -27,7 +27,7 @@ namespace icm {
 	static const double translation_amount = 1.0f;
 	static const double scale_amount = 0.1f;
 
-	static const double near_plane = 0.2;
+	static const double near_plane = .2;
 	static const double far_plane = 160.0;
 	
 }

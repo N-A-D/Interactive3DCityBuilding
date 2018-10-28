@@ -8,8 +8,13 @@
 namespace icm {
 	extern int frame_count;                           // Current FPS
 	extern QuadMesh ground_mesh;                      // The ground mesh
-	extern CubeMesh current_cube;                     // The current cube mesh being translated and scaled
+
+	extern Vector3D camera_position;
+	extern double FOV;                                // FOV of the perspective
+
 	extern std::vector<ExtrudedMesh> extruded_meshes; // Array of extruded meshes to save if prompted
+
+	extern CubeMesh current_cube;                     // The current cube mesh being translated and scaled
 	extern bool is_current_cube_active;                  // Signal to check if the current cube is being used to create a building
 	extern bool is_street;                            // Signal to check if the current cube mesh is a street
 	extern bool translate_cube;	                      // Signal to translate the current cube mesh

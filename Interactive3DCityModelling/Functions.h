@@ -25,4 +25,8 @@ namespace icm {
 	// Function key callback function for glut
 	void function_keys(int key, int x, int y) noexcept;
 
+	void mouse_func(int button, int state, int x, int y) noexcept;
+
+	// Mouse motion function
+	void mouse_motion_func(int x, int y) noexcept;
 }

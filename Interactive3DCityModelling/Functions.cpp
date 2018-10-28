@@ -27,6 +27,7 @@ void icm::initialize(int argc, char ** argv) noexcept
 	glutSpecialFunc(function_keys);
 	glutTimerFunc(0, timer_func, 0);
 	glutIdleFunc(idle_func);
+	glutMotionFunc(mouse_motion_func);
 
 	// Initialize OpenGL
 	glEnable(GL_NORMALIZE);
@@ -76,12 +77,12 @@ void icm::resize_func(int w, int h) noexcept
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT), icm::near_plane, icm::far_plane);
+	gluPerspective(icm::FOV, static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT), icm::near_plane, icm::far_plane);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(0.0, 70.0, 90.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(camera_position.x, camera_position.y, camera_position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 void icm::render_func() noexcept
@@ -158,6 +159,30 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 		
 		// To do added code to push a Extruded mesh onto the vector of extruded meshes
 	}
+
+	if (key == 'i') {
+		icm::FOV -= .25;
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(icm::FOV,
+			static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT),
+			icm::near_plane, icm::far_plane);
+		glutPostRedisplay();
+
+	}
+	else if (key == 'k') {
+		icm::FOV += .25;
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(icm::FOV,
+			static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT),
+			icm::near_plane, icm::far_plane);
+		glutPostRedisplay();
+	}
+
+	
 }
 
 void icm::function_keys(int key, int x, int y) noexcept
@@ -214,7 +239,6 @@ void icm::function_keys(int key, int x, int y) noexcept
 				icm::current_cube_position.x += icm::translation_amount;
 			if (icm::scale_horizontal) {
 				icm::cube_scale_factors.x += icm::scale_amount;
-				icm::current_cube_position.x += icm::scale_amount;
 			}
 		}
 	}
@@ -225,7 +249,6 @@ void icm::function_keys(int key, int x, int y) noexcept
 				icm::current_cube_position.x -= icm::translation_amount;
 			if (icm::scale_horizontal) {
 				icm::cube_scale_factors.x -= icm::scale_amount;
-				icm::current_cube_position.x -= icm::scale_amount;
 			}
 		}
 	}
@@ -235,7 +258,6 @@ void icm::function_keys(int key, int x, int y) noexcept
 		if (icm::is_current_cube_active) {
 			if (icm::scale_horizontal) {
 				icm::cube_scale_factors.z -= icm::scale_amount;
-				icm::current_cube_position.z -= icm::scale_amount;
 			}
 		}
 	}
@@ -244,7 +266,6 @@ void icm::function_keys(int key, int x, int y) noexcept
 		if (icm::is_current_cube_active) {
 			if (icm::scale_horizontal) {
 				icm::cube_scale_factors.z += icm::scale_amount;
-				icm::current_cube_position.z += icm::scale_amount;
 			}
 		}
 	}
@@ -269,3 +290,22 @@ void icm::function_keys(int key, int x, int y) noexcept
 		}
 	}
 }
+
+void icm::mouse_func(int button, int state, int x, int y) noexcept
+{
+	
+}
+
+void icm::mouse_motion_func(int x, int y) noexcept
+{
+	
+
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+
+	//gluLookAt(camera_position.x, camera_position.y, camera_position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	//glutPostRedisplay();
+
+}
+
