@@ -81,7 +81,7 @@ void icm::resize_func(int w, int h) noexcept
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(60.0, 10.0, 160.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(0.0, 70.0, 90.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 void icm::render_func() noexcept
@@ -91,6 +91,14 @@ void icm::render_func() noexcept
 
 	// Draw the ground mesh
 	DrawMeshQM(&icm::ground_mesh, icm::MESH_SIZE);
+
+	if (icm::is_current_cube_active) {
+		glPushMatrix();
+		glTranslatef(icm::current_cube_position.x, icm::current_cube_position.y, icm::current_cube_position.z);
+		glScalef(icm::cube_scale_factors.x, icm::cube_scale_factors.y, icm::cube_scale_factors.z);
+		drawCube(&icm::current_cube);
+		glPopMatrix();
+	}
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -121,10 +129,143 @@ void icm::timer_func(int value) noexcept
 
 void icm::keyboard(unsigned char key, int x, int y) noexcept
 {
-	// TO DO keyboard functionality
+	icm::scale_vertical = false;
+	icm::scale_horizontal = false;
+	icm::translate_cube = false;
+
+	if (key == 't') {
+		icm::translate_cube = icm::is_current_cube_active ? true : false;
+	}
+
+	else if (key == 'h') {
+		icm::scale_vertical = icm::is_current_cube_active ? true : false;
+	}
+
+	else if (key == 's') {
+		icm::scale_horizontal = icm::is_current_cube_active ? true : false;
+	}
+
+	// The current cube is converted into a extruded mesh and made inactive
+	if (key == 'e') {
+		icm::is_current_cube_active = false;
+		icm::is_street = false;
+		icm::translate_cube = false;
+		icm::scale_vertical = false;
+		icm::scale_horizontal = false;
+	
+		icm::current_cube_position = icm::cube_starting_pos;
+		icm::cube_scale_factors = icm::cube_starting_scale_factors;
+		
+		// To do added code to push a Extruded mesh onto the vector of extruded meshes
+	}
 }
 
 void icm::function_keys(int key, int x, int y) noexcept
 {
-	// TO DO function key functionality
+
+	// Create a cube mesh for a building
+	if (key == GLUT_KEY_F1) {
+		if (!icm::is_current_cube_active) {
+			icm::is_current_cube_active = true;
+			icm::is_street = false;
+			icm::translate_cube = false;
+			icm::scale_vertical = false;
+			icm::scale_horizontal = false;
+			icm::current_cube = newCube(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess);
+		}
+	}
+	
+	// Create a cube mesh for a street
+	if (key == GLUT_KEY_F2) {
+		
+		if (!icm::is_current_cube_active) {
+			icm::is_current_cube_active = true;
+			icm::is_street = true;
+			icm::translate_cube = false;
+			icm::scale_vertical = false;
+			icm::scale_horizontal = false;
+			icm::current_cube = newCube(icm::street_ambient, icm::street_diffuse, icm::street_specular, icm::street_shininess);
+			icm::cube_scale_factors.y = 0.2f;
+			icm::current_cube_position.y = 0.3f;
+		}
+	}
+
+	// Movement of the cube mesh
+
+	// positive z axis movement
+	if (key == GLUT_KEY_DOWN) {
+		if (icm::is_current_cube_active) {
+			if (icm::translate_cube)
+				icm::current_cube_position.z += icm::translation_amount;
+		}
+	}
+	// negative z axis movement
+	else if (key == GLUT_KEY_UP) {
+		if (icm::is_current_cube_active) {
+			if (icm::translate_cube)
+				icm::current_cube_position.z -= icm::translation_amount;
+		}
+	}
+
+	// positive x axis movement and scaling
+	if (key == GLUT_KEY_RIGHT) {
+		if (icm::is_current_cube_active) {
+			if (icm::translate_cube)
+				icm::current_cube_position.x += icm::translation_amount;
+			if (icm::scale_horizontal) {
+				icm::cube_scale_factors.x += icm::scale_amount;
+				icm::current_cube_position.x += icm::scale_amount;
+			}
+		}
+	}
+	// negative x axis movement and scaling
+	else if (key == GLUT_KEY_LEFT) {
+		if (icm::is_current_cube_active) {
+			if (icm::translate_cube)
+				icm::current_cube_position.x -= icm::translation_amount;
+			if (icm::scale_horizontal) {
+				icm::cube_scale_factors.x -= icm::scale_amount;
+				icm::current_cube_position.x -= icm::scale_amount;
+			}
+		}
+	}
+
+	// positive z axis scaling
+	 if (key == GLUT_KEY_HOME) {
+		if (icm::is_current_cube_active) {
+			if (icm::scale_horizontal) {
+				icm::cube_scale_factors.z -= icm::scale_amount;
+				icm::current_cube_position.z -= icm::scale_amount;
+			}
+		}
+	}
+	// negative z axis scaling
+	else if (key == GLUT_KEY_END) {
+		if (icm::is_current_cube_active) {
+			if (icm::scale_horizontal) {
+				icm::cube_scale_factors.z += icm::scale_amount;
+				icm::current_cube_position.z += icm::scale_amount;
+			}
+		}
+	}
+
+	// Vertical scaling
+	// positive y axis scaling
+	if (key == GLUT_KEY_PAGE_UP) {
+		if (icm::is_current_cube_active) {
+			if (icm::scale_vertical && !icm::is_street) {
+				icm::cube_scale_factors.y += icm::scale_amount;
+				icm::current_cube_position.y += icm::scale_amount;
+			}
+		}
+	}
+	// negative y axis scaling
+	else if (key == GLUT_KEY_INSERT) {
+		if (icm::is_current_cube_active) {
+			if (icm::scale_vertical && !icm::is_street) {
+				icm::cube_scale_factors.y -= icm::scale_amount;
+				icm::current_cube_position.y -= icm::scale_amount;
+			}
+		}
+	}
 }

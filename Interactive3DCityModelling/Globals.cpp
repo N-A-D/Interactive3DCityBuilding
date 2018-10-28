@@ -5,6 +5,8 @@ int icm::frame_count = 0;
 QuadMesh icm::ground_mesh;
 CubeMesh icm::current_cube;
 std::vector<icm::ExtrudedMesh> icm::extruded_meshes;
+bool icm::is_current_cube_active = false;
+bool icm::is_street = false;
 bool icm::translate_cube = false;
 bool icm::scale_horizontal = false;
 bool icm::scale_vertical = false;
