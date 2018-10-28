@@ -1,5 +1,5 @@
 #include <gl/glut.h>
-
+#include "Vector3D.h"
 #include "CubeMesh.h"
 
 // Vertex positions of a standard size cube (width 2), centered at the origin
@@ -31,7 +31,7 @@ static GLfloat quadNormals[][3] = {{ 0.0, 0.0, -1.0},	// Back Face
                           { 0.0, 0.0,  1.0},	// Front Face
                           { 0.0,-1.0,  0.0}};	// Bottom Face
 
-CubeMesh newCube()
+CubeMesh newCube(Vector3D ambient, Vector3D diffuse, Vector3D specular, double shininess)
 {
     CubeMesh cube;
 
@@ -40,23 +40,24 @@ CubeMesh newCube()
     cube.tx = 0.0;
     cube.ty = 0.0;
     cube.tz = 0.0;
-    Set(&cube.center, 0, 0, 0);
+	cube.selected = 0;
+	Set(&cube.center, 0, 0, 0);
     Set(&cube.dim, 2.0f, 2.0f, 2.0f);
 
-    cube.mat_ambient[0] = 0.0;
-    cube.mat_ambient[1] = 0.05f;
-    cube.mat_ambient[2] = 0.0;
-    cube.mat_ambient[3] = 1.0;
-    cube.mat_specular[0] = 0.0;
-    cube.mat_specular[1] = 0.0;
-    cube.mat_specular[2] = 0.004f;
+    cube.mat_ambient[0] = ambient.x;
+    cube.mat_ambient[1] = ambient.y;
+    cube.mat_ambient[2] = ambient.z;
+    cube.mat_ambient[3] = 1.0f;
+    cube.mat_specular[0] = specular.x;
+    cube.mat_specular[1] = specular.y;
+    cube.mat_specular[2] = specular.z;
     cube.mat_specular[3] = 1.0;
-    cube.mat_diffuse[0] = 0.5;
-    cube.mat_diffuse[1] = 0.5;
-    cube.mat_diffuse[2] = 0.5;
-    cube.mat_diffuse[3] = 1.0;
-    cube.mat_shininess[0] = 0;
-
+    cube.mat_diffuse[0] = diffuse.x;
+    cube.mat_diffuse[1] = diffuse.y;
+    cube.mat_diffuse[2] = diffuse.z;
+    cube.mat_diffuse[3] = 1.0f;
+    cube.mat_shininess[0] = (float)shininess;
+	
     cube.highlightMat_ambient[0] = 0.0;
     cube.highlightMat_ambient[1] = 0.00;
     cube.highlightMat_ambient[2] = 0.0;
@@ -70,6 +71,7 @@ CubeMesh newCube()
     cube.highlightMat_diffuse[2] = 0.0;
     cube.highlightMat_diffuse[3] = 1.0;
     cube.highlightMat_shininess[0] = 0.0;
+	
 
     return cube;
 }
@@ -84,6 +86,7 @@ void getBBox(CubeMesh *cube, Vector3D *min, Vector3D *max)
 
 void drawCube(CubeMesh *cube)
 {
+	
     if (cube->selected)
     {
         // Setup the material and lights used for selected cube
@@ -92,6 +95,7 @@ void drawCube(CubeMesh *cube)
         glMaterialfv(GL_FRONT, GL_DIFFUSE, cube->highlightMat_diffuse);
         glMaterialfv(GL_FRONT, GL_SHININESS, cube->highlightMat_shininess);
     }
+	
     else
     {
         // Setup the material and lights used for the cube
@@ -100,7 +104,6 @@ void drawCube(CubeMesh *cube)
         glMaterialfv(GL_FRONT, GL_DIFFUSE, cube->mat_diffuse);
         glMaterialfv(GL_FRONT, GL_SHININESS, cube->mat_shininess);
     }
-
 
     // Transform and Draw cube   
     glPushMatrix();
@@ -147,4 +150,17 @@ void drawCube(CubeMesh *cube)
     glEnd();
     glPopMatrix();
 }
+
+void setPosition(CubeMesh * cube, Vector3D position)
+{
+	cube->tx = position.x;
+	cube->ty = position.y;
+	cube->tz = position.z;
+}
+
+void setDimensions(CubeMesh * cube, Vector3D dimensions)
+{
+	cube->dim = dimensions;
+}
+
 	

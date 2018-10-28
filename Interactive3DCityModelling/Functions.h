@@ -24,4 +24,5 @@ namespace icm {
 
 	// Function key callback function for glut
 	void function_keys(int key, int x, int y) noexcept;
+
 }

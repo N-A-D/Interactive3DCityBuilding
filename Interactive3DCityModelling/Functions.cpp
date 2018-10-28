@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Constants.h"
 #include "Functions.h"
+#include "CubeMesh.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -39,7 +40,7 @@ void icm::initialize(int argc, char ** argv) noexcept
 	//float light_position0[] = { -6.0f, 12.0f, 0.0f, 1.0f };
 	float light_position0[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 	//float light_position1[] = { 6.0f, 12.0f, 0.0f, 1.0f };
-	float light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	float light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	float light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	float light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -52,7 +53,7 @@ void icm::initialize(int argc, char ** argv) noexcept
 
 	// Initialize the ground mesh
 	icm::ground_mesh = NewQuadMesh(icm::MESH_SIZE);
-	auto ground_mesh_org = NewVector3D(-16.0f, 0.0f, 16.0f);
+	auto ground_mesh_org = NewVector3D(-icm::MESH_SIZE / 2, 0.0f, icm::MESH_SIZE / 2);
 	auto right = NewVector3D(1.0f, 0.0f, 0.0f);
 	auto front = NewVector3D(0.0f, 0.0f, -1.0f);
 	InitMeshQM(&icm::ground_mesh, icm::MESH_SIZE, ground_mesh_org, icm::MESH_SIZE, icm::MESH_SIZE, right, front);
@@ -62,17 +63,6 @@ void icm::initialize(int argc, char ** argv) noexcept
 	auto ground_mesh_diffuse = NewVector3D(0.87f, 0.72f, 0.53f);
 	auto ground_mesh_specular = NewVector3D(0.04f, 0.04f, 0.04f);
 	SetMaterialQM(&icm::ground_mesh, ground_mesh_ambient, ground_mesh_diffuse, ground_mesh_specular, 0.2);
-
-	// Initialize the street mesh
-	icm::street_mesh = NewQuadMesh(icm::MESH_SIZE);
-	Vector3D street_mesh_org = { ground_mesh_org.x, ground_mesh_org.y + street_mesh_offset_from_ground_mesh, ground_mesh_org.z };
-	InitMeshQM(&icm::street_mesh, icm::MESH_SIZE, street_mesh_org, icm::MESH_SIZE, icm::MESH_SIZE, right, front);
-
-	// Set the lighting/shading for the street mesh
-	auto street_mesh_ambient = NewVector3D(0.35f, 0.35f, 0.35f);
-	auto street_mesh_diffuse = NewVector3D(0.35f, 0.35f, 0.35f);
-	auto street_mesh_specular = NewVector3D(0.04f, 0.04f, 0.04f);
-	SetMaterialQM(&icm::street_mesh, street_mesh_ambient, street_mesh_diffuse, street_mesh_specular, 0.15);
 }
 
 void icm::run() noexcept
@@ -86,12 +76,12 @@ void icm::resize_func(int w, int h) noexcept
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT), 0.2, 80.0);
+	gluPerspective(45.0, static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT), icm::near_plane, icm::far_plane);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(0.0, 15.0, 40, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(60.0, 10.0, 160.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 void icm::render_func() noexcept
@@ -99,12 +89,8 @@ void icm::render_func() noexcept
 	icm::frame_count++;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	// Draw the ground mesh
 	DrawMeshQM(&icm::ground_mesh, icm::MESH_SIZE);
-
-	// Draw the street mesh
-	DrawMeshQM(&icm::street_mesh, icm::MESH_SIZE);
 
 	glutSwapBuffers();
 	glutPostRedisplay();

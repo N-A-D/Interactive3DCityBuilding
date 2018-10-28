@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeMesh.h" />
+    <ClInclude Include="ExtrudedMesh.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Globals.h" />

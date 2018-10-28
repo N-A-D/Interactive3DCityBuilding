@@ -53,5 +53,8 @@
     <ClInclude Include="QuadMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExtrudedMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
