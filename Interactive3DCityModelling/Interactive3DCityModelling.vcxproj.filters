@@ -33,6 +33,9 @@
     <ClCompile Include="QuadMesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="subdivisionCurve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtrudedMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="subdivisionCurve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -127,6 +127,7 @@
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QuadMesh.c" />
+    <ClCompile Include="subdivisionCurve.cpp" />
     <ClCompile Include="Vector3D.c" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +137,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="QuadMesh.h" />
+    <ClInclude Include="subdivisionCurve.h" />
     <ClInclude Include="Vector3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
