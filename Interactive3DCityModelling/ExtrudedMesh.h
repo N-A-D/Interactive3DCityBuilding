@@ -17,7 +17,7 @@ namespace icm {
 					const std::vector<float>& diffuse, 
 					const std::vector<float>& specular, 
 					const std::vector<float>& shininess, 
-					bool is_street = false);
+					bool is_street_mesh = false);
 
 		Vector3D calculate_side_normal(const Vector3D& a, 
 									   const Vector3D& b, 
@@ -33,5 +33,6 @@ namespace icm {
 		std::vector<float> diffuse;
 		std::vector<float> specular;
 		std::vector<float> shininess;
+		bool is_street_mesh;
 	};
 }
