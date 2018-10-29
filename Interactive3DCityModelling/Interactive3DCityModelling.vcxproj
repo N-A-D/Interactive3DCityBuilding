@@ -123,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CubeMesh.c" />
+    <ClCompile Include="ExtrudedMesh.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="main.cpp" />
