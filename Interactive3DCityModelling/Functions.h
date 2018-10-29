@@ -29,4 +29,8 @@ namespace icm {
 
 	// Mouse motion function
 	void mouse_motion_func(int x, int y) noexcept;
+
+	// Converts degrees to radians
+	float radians(float degrees) noexcept;
+
 }

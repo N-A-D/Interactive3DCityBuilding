@@ -8,6 +8,10 @@
 #include <gl/glew.h>
 #include <gl/GLU.h>
 #include <gl/freeglut.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif // !M_PI
+
 
 void icm::initialize(int argc, char ** argv) noexcept
 {
@@ -101,6 +105,10 @@ void icm::render_func() noexcept
 		glPopMatrix();
 	}
 
+	for (auto extruded_mesh : icm::extruded_meshes) {
+		extruded_mesh.draw();
+	}
+
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -148,16 +156,26 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 
 	// The current cube is converted into a extruded mesh and made inactive
 	if (key == 'e') {
-		icm::is_current_cube_active = false;
-		icm::is_street = false;
-		icm::translate_cube = false;
-		icm::scale_vertical = false;
-		icm::scale_horizontal = false;
-	
-		icm::current_cube_position = icm::cube_starting_pos;
-		icm::cube_scale_factors = icm::cube_starting_scale_factors;
-		
-		// To do added code to push a Extruded mesh onto the vector of extruded meshes
+		if (icm::is_current_cube_active) {
+
+			// To do added code to push a Extruded mesh onto the vector of extruded meshes
+			if (!icm::is_street) {
+				icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess));
+			}
+			else {
+				icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::street_mesh_ambient, icm::street_mesh_diffuse, icm::street_mesh_specular, icm::street_mesh_shininess, true));
+			}
+			
+			icm::is_current_cube_active = false;
+			icm::is_street = false;
+			icm::translate_cube = false;
+			icm::scale_vertical = false;
+			icm::scale_horizontal = false;
+
+			// Reset the cube starting position and scaling factors
+			icm::current_cube_position = icm::cube_starting_pos;
+			icm::cube_scale_factors = icm::cube_starting_scale_factors;
+		}
 	}
 
 	if (key == 'i') {
@@ -168,6 +186,12 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 		gluPerspective(icm::FOV,
 			static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT),
 			icm::near_plane, icm::far_plane);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		gluLookAt(camera_position.x, camera_position.y, camera_position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
 		glutPostRedisplay();
 
 	}
@@ -179,10 +203,15 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 		gluPerspective(icm::FOV,
 			static_cast<double>(icm::WINDOW_WIDTH) / static_cast<double>(icm::WINDOW_HEIGHT),
 			icm::near_plane, icm::far_plane);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		gluLookAt(camera_position.x, camera_position.y, camera_position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
 		glutPostRedisplay();
 	}
 
-	
 }
 
 void icm::function_keys(int key, int x, int y) noexcept
@@ -196,7 +225,7 @@ void icm::function_keys(int key, int x, int y) noexcept
 			icm::translate_cube = false;
 			icm::scale_vertical = false;
 			icm::scale_horizontal = false;
-			icm::current_cube = newCube(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess);
+			icm::current_cube = newCube(icm::cube_ambient, icm::cube_diffuse, icm::cube_specular, icm::cube_shininess);
 		}
 	}
 	
@@ -257,7 +286,7 @@ void icm::function_keys(int key, int x, int y) noexcept
 	 if (key == GLUT_KEY_HOME) {
 		if (icm::is_current_cube_active) {
 			if (icm::scale_horizontal) {
-				icm::cube_scale_factors.z -= icm::scale_amount;
+				icm::cube_scale_factors.z += icm::scale_amount;
 			}
 		}
 	}
@@ -265,7 +294,7 @@ void icm::function_keys(int key, int x, int y) noexcept
 	else if (key == GLUT_KEY_END) {
 		if (icm::is_current_cube_active) {
 			if (icm::scale_horizontal) {
-				icm::cube_scale_factors.z += icm::scale_amount;
+				icm::cube_scale_factors.z -= icm::scale_amount;
 			}
 		}
 	}
@@ -299,13 +328,10 @@ void icm::mouse_func(int button, int state, int x, int y) noexcept
 void icm::mouse_motion_func(int x, int y) noexcept
 {
 	
+}
 
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-
-	//gluLookAt(camera_position.x, camera_position.y, camera_position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-
-	//glutPostRedisplay();
-
+float icm::radians(float degrees) noexcept
+{
+	return degrees * static_cast<float>(M_PI) / 180.0f;
 }
 

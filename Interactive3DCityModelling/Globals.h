@@ -11,7 +11,7 @@ namespace icm {
 
 	extern Vector3D camera_position;
 	extern double FOV;                                // FOV of the perspective
-
+	class ExtrudedMesh;
 	extern std::vector<ExtrudedMesh> extruded_meshes; // Array of extruded meshes to save if prompted
 
 	extern CubeMesh current_cube;                     // The current cube mesh being translated and scaled
