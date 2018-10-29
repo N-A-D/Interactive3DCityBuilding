@@ -1,5 +1,10 @@
 #include "ExtrudedMesh.h"
 #include <iostream>
+#include <random>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif // !M_PI
+
 
 icm::ExtrudedMesh::ExtrudedMesh(const std::vector<float>& ambient,
 								const std::vector<float>& diffuse,
@@ -11,6 +16,7 @@ icm::ExtrudedMesh::ExtrudedMesh(const std::vector<float>& ambient,
 	auto width = icm::cube_scale_factors.x * 2.0f;
 	auto height = icm::cube_scale_factors.y * 2.0f;
 	auto depth = icm::cube_scale_factors.z * 2.0f;
+	int floors = static_cast<int>(height / icm::floor_height);
 
 	Vector3D bottom_left = NewVector3D(current_cube_position.x - width / 2.0f, current_cube_position.y - height / 2.0f,
 		current_cube_position.z + depth / 2.0f);
@@ -30,14 +36,24 @@ icm::ExtrudedMesh::ExtrudedMesh(const std::vector<float>& ambient,
 	vertices.push_back(bottom_right);
 
 	if (!is_street) {
-		int floors = static_cast<int>(height / icm::floor_height);
-		for (int i = 1; i <= floors; i++) {
 
-			vertices.push_back(NewVector3D(bottom_left.x, bottom_left.y + i * icm::floor_height, bottom_left.z));
-			vertices.push_back(NewVector3D(top_left.x, top_left.y + i * icm::floor_height, top_left.z));
-			vertices.push_back(NewVector3D(top_right.x, top_right.y + i * icm::floor_height, top_right.z));
-			vertices.push_back(NewVector3D(bottom_right.x, bottom_right.y + i * icm::floor_height, bottom_right.z));
+		auto random = []() {
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+			return dis(gen);
+		};
 
+		auto result = random();
+
+		if (result <= 0.33) {
+			sine_scaling(floors, bottom_left, top_left, top_right, bottom_right);
+		}
+		else if (result > 0.33 && result <= 0.66) {
+			random_scaling(floors, bottom_left, top_left, top_right, bottom_right);
+		}
+		else {
+			no_scaling(floors, bottom_left, top_left, top_right, bottom_right);
 		}
 	}
 	else {
@@ -123,4 +139,62 @@ void icm::ExtrudedMesh::draw() const noexcept
 
 	glEnd();
 	glPopMatrix();
+}
+
+void icm::ExtrudedMesh::sine_scaling(int floors, Vector3D bottom_left, Vector3D top_left, Vector3D top_right, Vector3D bottom_right) noexcept
+{
+
+	auto radians = [](float deg) {
+		return deg * static_cast<float>(M_PI) * 180.0f;
+	};
+
+	auto sin_deg = [radians](float deg) {
+		return sin(radians(deg));
+	};
+
+	float angle = 0.0f;
+
+	for (int i = 1; i <= floors; i++) {
+
+		vertices.push_back(NewVector3D(bottom_left.x + 1.0f * sin_deg(angle), bottom_left.y + i * icm::floor_height, bottom_left.z - 1.0f * sin_deg(angle)));
+		vertices.push_back(NewVector3D(top_left.x + 1.0f * sin_deg(angle), top_left.y + i * icm::floor_height, top_left.z + 1.0f * sin_deg(angle)));
+		vertices.push_back(NewVector3D(top_right.x - 1.0f * sin_deg(angle), top_right.y + i * icm::floor_height, top_right.z + 1.0f * sin_deg(angle)));
+		vertices.push_back(NewVector3D(bottom_right.x - 1.0f * sin_deg(angle), bottom_right.y + i * icm::floor_height, bottom_right.z - 1.0f * sin_deg(angle)));
+
+		angle += 0.001f;
+	}
+}
+
+void icm::ExtrudedMesh::random_scaling(int floors, Vector3D bottom_left, Vector3D top_left, Vector3D top_right, Vector3D bottom_right) noexcept
+{
+
+	auto random = []() {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+		return dis(gen);
+	};
+
+	for (int i = 1; i <= floors; i++) {
+
+		vertices.push_back(NewVector3D(bottom_left.x + random() * random(), bottom_left.y + i * icm::floor_height, bottom_left.z - random() * random()));
+		vertices.push_back(NewVector3D(top_left.x + random() * random(), top_left.y + i * icm::floor_height, top_left.z + random() * random()));
+		vertices.push_back(NewVector3D(top_right.x - random() * random(), top_right.y + i * icm::floor_height, top_right.z + random() * random()));
+		vertices.push_back(NewVector3D(bottom_right.x - random() * random(), bottom_right.y + i * icm::floor_height, bottom_right.z - random() * random()));
+
+	}
+
+}
+
+void icm::ExtrudedMesh::no_scaling(int floors, Vector3D bottom_left, Vector3D top_left, Vector3D top_right, Vector3D bottom_right) noexcept
+{
+
+	for (int i = 1; i <= floors; i++) {
+
+		vertices.push_back(NewVector3D(bottom_left.x, bottom_left.y + i * icm::floor_height, bottom_left.z));
+		vertices.push_back(NewVector3D(top_left.x, top_left.y + i * icm::floor_height, top_left.z ));
+		vertices.push_back(NewVector3D(top_right.x , top_right.y + i * icm::floor_height, top_right.z));
+		vertices.push_back(NewVector3D(bottom_right.x, bottom_right.y + i * icm::floor_height, bottom_right.z));
+
+	}
 }

@@ -30,10 +30,13 @@ namespace icm {
 	// Mouse motion function
 	void mouse_motion_func(int x, int y) noexcept;
 
-	// Converts degrees to radians
-	float radians(float degrees) noexcept;
-
 	// Clears the current city model
 	void clear_scene() noexcept;
+
+	// Saves any buildings into a file
+	void save_to_file() noexcept;
+
+	// Load from an existing file
+	void load_from_file() noexcept;
 
 }

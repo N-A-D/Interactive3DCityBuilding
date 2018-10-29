@@ -8,10 +8,8 @@
 #include <gl/glew.h>
 #include <gl/GLU.h>
 #include <gl/freeglut.h>
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif // !M_PI
-
+#include <fstream>
+#include <cctype>
 
 void icm::initialize(int argc, char ** argv) noexcept
 {
@@ -215,6 +213,14 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 	if (key == 'z') {
 		icm::clear_scene();
 	}
+
+	if (key == 'l') {
+		load_from_file();
+	}
+
+	if (key == 'o') {
+		save_to_file();
+	}
 }
 
 void icm::function_keys(int key, int x, int y) noexcept
@@ -333,11 +339,6 @@ void icm::mouse_motion_func(int x, int y) noexcept
 	
 }
 
-float icm::radians(float degrees) noexcept
-{
-	return degrees * static_cast<float>(M_PI) / 180.0f;
-}
-
 void icm::clear_scene() noexcept
 {
 	extruded_meshes.clear();
@@ -348,5 +349,73 @@ void icm::clear_scene() noexcept
 	scale_horizontal = false;
 	current_cube_position = cube_starting_pos;
 	cube_scale_factors = cube_starting_scale_factors;
+}
+
+void icm::save_to_file() noexcept
+{
+	if (extruded_meshes.empty())
+		return;
+	std::ofstream os("city_data.txt", std::ios::out | std::ios::trunc);
+	std::cout << "Saving to file!" << std::endl;
+	for (auto extruded_mesh : extruded_meshes) {
+		if (extruded_mesh.is_street_mesh) {
+			os << "street";
+		}
+		else {
+			os << "building";
+		}
+		for (auto vertex : extruded_mesh.vertices) {
+			os << " " << vertex.x << " " << vertex.y << " " << vertex.z;
+		}
+		os << std::endl;
+	}
+	os.close();
+}
+
+void icm::load_from_file() noexcept
+{
+	clear_scene();
+	std::cout << "Reading from file!" << std::endl;
+	std::ifstream in("city_data.txt");
+	std::string line;
+	while (std::getline(in, line)) {
+
+		std::istringstream iss(line);
+
+		std::string mesh_type;
+		iss >> mesh_type;
+
+		std::vector<Vector3D> vertices;
+		if (mesh_type == "street") {
+			Vector3D vertex;
+			while (iss >> vertex.x >> vertex.y >> vertex.z) {
+				vertices.push_back(vertex);
+			}
+			ExtrudedMesh em;
+			em.ambient = icm::street_mesh_ambient;
+			em.diffuse = icm::street_mesh_diffuse;
+			em.specular = icm::street_mesh_specular;
+			em.shininess = icm::street_mesh_shininess;
+			em.vertices = vertices;
+			em.is_street_mesh = true;
+			icm::extruded_meshes.push_back(em);
+		}
+		else {
+			Vector3D vertex;
+			while (iss >> vertex.x >> vertex.y >> vertex.z) {
+				vertices.push_back(vertex);
+			}
+			ExtrudedMesh em;
+			em.ambient = icm::building_ambient;
+			em.diffuse = icm::building_diffuse;
+			em.specular = icm::building_specular;
+			em.shininess = icm::building_shininess;
+			em.vertices = vertices;
+			em.is_street_mesh = false;
+			icm::extruded_meshes.push_back(em);
+		}
+
+	}
+	in.close();
 }
 
