@@ -5,8 +5,8 @@ icm::ExtrudedMesh::ExtrudedMesh(const std::vector<float>& ambient,
 								const std::vector<float>& diffuse,
 								const std::vector<float>& specular,
 								const std::vector<float>& shininess,
-								bool is_street)
-	: ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess)
+								bool is_street_mesh)
+	: ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess), is_street_mesh(is_street_mesh)
 {
 	auto width = icm::cube_scale_factors.x * 2.0f;
 	auto height = icm::cube_scale_factors.y * 2.0f;
