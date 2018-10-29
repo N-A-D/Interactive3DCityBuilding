@@ -33,4 +33,7 @@ namespace icm {
 	// Converts degrees to radians
 	float radians(float degrees) noexcept;
 
+	// Clears the current city model
+	void clear_scene() noexcept;
+
 }

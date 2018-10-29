@@ -37,7 +37,7 @@ void icm::initialize(int argc, char ** argv) noexcept
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
-	glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
+	glClearColor(0.53f, 0.81f, 0.98f, 0.0f);
 	glClearDepth(1.0f);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
@@ -64,8 +64,8 @@ void icm::initialize(int argc, char ** argv) noexcept
 	InitMeshQM(&icm::ground_mesh, icm::MESH_SIZE, ground_mesh_org, icm::MESH_SIZE, icm::MESH_SIZE, right, front);
 
 	// Set the lighting/shading for the ground mesh
-	auto ground_mesh_ambient = NewVector3D(0.87f, 0.72f, 0.53f);
-	auto ground_mesh_diffuse = NewVector3D(0.87f, 0.72f, 0.53f);
+	auto ground_mesh_ambient = NewVector3D(0.6f, 0.6f, 0.6f);
+	auto ground_mesh_diffuse = NewVector3D(0.6f, 0.6f, 0.6f);
 	auto ground_mesh_specular = NewVector3D(0.04f, 0.04f, 0.04f);
 	SetMaterialQM(&icm::ground_mesh, ground_mesh_ambient, ground_mesh_diffuse, ground_mesh_specular, 0.2);
 }
@@ -212,6 +212,9 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 		glutPostRedisplay();
 	}
 
+	if (key == 'z') {
+		icm::clear_scene();
+	}
 }
 
 void icm::function_keys(int key, int x, int y) noexcept
@@ -333,5 +336,17 @@ void icm::mouse_motion_func(int x, int y) noexcept
 float icm::radians(float degrees) noexcept
 {
 	return degrees * static_cast<float>(M_PI) / 180.0f;
+}
+
+void icm::clear_scene() noexcept
+{
+	extruded_meshes.clear();
+	is_current_cube_active = false;
+	is_street = false;
+	translate_cube = false;
+	scale_vertical = false;
+	scale_horizontal = false;
+	current_cube_position = cube_starting_pos;
+	cube_scale_factors = cube_starting_scale_factors;
 }
 
