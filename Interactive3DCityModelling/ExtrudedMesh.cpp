@@ -10,6 +10,7 @@ icm::ExtrudedMesh::ExtrudedMesh(const std::vector<float>& ambient,
 								const std::vector<float>& diffuse,
 								const std::vector<float>& specular,
 								const std::vector<float>& shininess,
+								icm::BuildingType building_type,
 								bool is_street_mesh)
 	: ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess), is_street_mesh(is_street_mesh)
 {
@@ -37,22 +38,13 @@ icm::ExtrudedMesh::ExtrudedMesh(const std::vector<float>& ambient,
 
 	if (!is_street) {
 
-		auto random = []() {
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-			return dis(gen);
-		};
-
-		auto result = random();
-
-		if (result <= 0.33) {
+		if (building_type == BuildingType::SINE) {
 			sine_scaling(floors, bottom_left, top_left, top_right, bottom_right);
 		}
-		else if (result > 0.33 && result <= 0.66) {
+		else if (building_type == BuildingType::RANDOM) {
 			random_scaling(floors, bottom_left, top_left, top_right, bottom_right);
 		}
-		else {
+		else if (building_type == BuildingType::NONE) {
 			no_scaling(floors, bottom_left, top_left, top_right, bottom_right);
 		}
 	}

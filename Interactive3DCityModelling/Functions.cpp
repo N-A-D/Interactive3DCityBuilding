@@ -152,24 +152,15 @@ void icm::keyboard(unsigned char key, int x, int y) noexcept
 		icm::scale_horizontal = icm::is_current_cube_active ? true : false;
 	}
 
-	// The current cube is converted into a extruded mesh and made inactive
+	// Save street
 	if (key == 'e') {
-		if (icm::is_current_cube_active) {
-
-			// To do added code to push a Extruded mesh onto the vector of extruded meshes
-			if (!icm::is_street) {
-				icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess));
-			}
-			else {
-				icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::street_mesh_ambient, icm::street_mesh_diffuse, icm::street_mesh_specular, icm::street_mesh_shininess, true));
-			}
-			
+		if (icm::is_current_cube_active && icm::is_street) {
+			icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::street_mesh_ambient, icm::street_mesh_diffuse, icm::street_mesh_specular, icm::street_mesh_shininess, icm::BuildingType::NONE, true));
 			icm::is_current_cube_active = false;
 			icm::is_street = false;
 			icm::translate_cube = false;
 			icm::scale_vertical = false;
 			icm::scale_horizontal = false;
-
 			// Reset the cube starting position and scaling factors
 			icm::current_cube_position = icm::cube_starting_pos;
 			icm::cube_scale_factors = icm::cube_starting_scale_factors;
@@ -250,6 +241,60 @@ void icm::function_keys(int key, int x, int y) noexcept
 			icm::current_cube = newCube(icm::street_ambient, icm::street_diffuse, icm::street_specular, icm::street_shininess);
 			icm::cube_scale_factors.y = 0.2f;
 			icm::current_cube_position.y = 0.3f;
+		}
+	}
+
+	// Create random building shape
+	if (key == GLUT_KEY_F5) {
+		if (icm::is_current_cube_active && !icm::is_street) {
+
+			icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess, icm::BuildingType::RANDOM));
+
+			icm::is_current_cube_active = false;
+			icm::is_street = false;
+			icm::translate_cube = false;
+			icm::scale_vertical = false;
+			icm::scale_horizontal = false;
+
+			// Reset the cube starting position and scaling factors
+			icm::current_cube_position = icm::cube_starting_pos;
+			icm::cube_scale_factors = icm::cube_starting_scale_factors;
+		}
+	}
+
+	// Create sine curved shape
+	if (key == GLUT_KEY_F6) {
+		if (icm::is_current_cube_active && !icm::is_street) {
+
+			icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess, icm::BuildingType::SINE));
+			
+			icm::is_current_cube_active = false;
+			icm::is_street = false;
+			icm::translate_cube = false;
+			icm::scale_vertical = false;
+			icm::scale_horizontal = false;
+
+			// Reset the cube starting position and scaling factors
+			icm::current_cube_position = icm::cube_starting_pos;
+			icm::cube_scale_factors = icm::cube_starting_scale_factors;
+		}
+	}
+
+	// Create normal building shape
+	if (key == GLUT_KEY_F7) {
+		if (icm::is_current_cube_active && !icm::is_street) {
+
+			icm::extruded_meshes.push_back(icm::ExtrudedMesh(icm::building_ambient, icm::building_diffuse, icm::building_specular, icm::building_shininess, icm::BuildingType::NONE));
+
+			icm::is_current_cube_active = false;
+			icm::is_street = false;
+			icm::translate_cube = false;
+			icm::scale_vertical = false;
+			icm::scale_horizontal = false;
+
+			// Reset the cube starting position and scaling factors
+			icm::current_cube_position = icm::cube_starting_pos;
+			icm::cube_scale_factors = icm::cube_starting_scale_factors;
 		}
 	}
 

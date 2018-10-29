@@ -10,6 +10,12 @@
 
 namespace icm {
 
+	enum class BuildingType {
+		RANDOM,
+		SINE, 
+		NONE
+	};
+
 	// Contains the vertices of an extruded mesh
 	class ExtrudedMesh {
 	public:
@@ -17,7 +23,8 @@ namespace icm {
 		ExtrudedMesh(const std::vector<float>& ambient, 
 					const std::vector<float>& diffuse, 
 					const std::vector<float>& specular, 
-					const std::vector<float>& shininess, 
+					const std::vector<float>& shininess,
+			        BuildingType building_type,
 					bool is_street_mesh = false);
 
 		// Calculates the normal vector for a side panel
@@ -35,10 +42,13 @@ namespace icm {
 		// Random number scaling
 		void random_scaling(int floors, Vector3D bottom_left, Vector3D top_left, Vector3D top_right, Vector3D bottom_right) noexcept;
 
+		// Linear scaling
+		void linear_scaling(int floors, Vector3D bottom_left, Vector3D top_left, Vector3D top_right, Vector3D bottom_right) noexcept;
+		
 		// No scaling
 		void no_scaling(int floors, Vector3D bottom_left, Vector3D top_left, Vector3D top_right, Vector3D bottom_right) noexcept;
 
-
+		
 
 		std::vector<Vector3D> vertices;
 		std::vector<float> ambient;
