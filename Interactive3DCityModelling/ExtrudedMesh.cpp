@@ -95,14 +95,15 @@ void icm::ExtrudedMesh::draw() const noexcept
 		glVertex3f(prev_br.x, prev_br.y, prev_br.z);
 		glVertex3f(prev_bl.x, prev_bl.y, prev_bl.z);
 
-		normal = calculate_side_normal(prev_br, curr_tr, prev_tr, curr_br);
+		auto temp = calculate_side_normal(prev_br, curr_tr, prev_tr, curr_br);
+		Negate(&temp, &normal);
 		glNormal3f(normal.x, normal.y, normal.z);
 		glVertex3f(curr_br.x, curr_br.y, curr_br.z);
 		glVertex3f(curr_tr.x, curr_tr.y, curr_tr.z);
 		glVertex3f(prev_tr.x, prev_tr.y, prev_tr.z);
 		glVertex3f(prev_br.x, prev_br.y, prev_br.z);
 
-		normal = calculate_side_normal(prev_bl, curr_tl, prev_tl, curr_tl);
+		normal = calculate_side_normal(prev_bl, curr_tl, prev_tl, curr_bl);
 		glNormal3f(normal.x, normal.y, normal.z);
 		glVertex3f(curr_bl.x, curr_bl.y, curr_bl.z);
 		glVertex3f(curr_tl.x, curr_tl.y, curr_tl.z);
